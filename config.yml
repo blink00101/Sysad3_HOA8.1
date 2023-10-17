@@ -1,0 +1,8 @@
+---
+- hosts: compute
+  become: true
+  roles:
+#    - base
+#    - neutron
+    - horizon
+#    - cinder
