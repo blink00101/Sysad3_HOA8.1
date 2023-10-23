@@ -1,8 +1,15 @@
 ---
-- hosts: compute
+- hosts: all
   become: true
-  roles:
-#    - base
-#    - neutron
-    - horizon
-#    - cinder
+  vars:
+    pcap_file: "/path/to/pcap/file"
+    output_file: "/path/to/output/file"
+
+  tasks:
+    - name: Extract PCAP
+      command: "tshark -r {{pcap_file}} -T fields -e data tcp.port==80 | tr -d ''> | xxd -r -p > {{ output_file }}"
+      register: extract_pcap
+
+    - name: Copy extract
+      debug:
+        var: extract_pcap

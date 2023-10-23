@@ -1,0 +1,33 @@
+---
+- name: Extract data field from PCAP file and save it to a file
+  hosts: all
+  tasks:
+  - name: Create Directory
+    file:
+      path: "~/path/to/pcap/file"
+      state: directory
+      mode: 0755
+
+  - name: Ensure PCAP directory exists and is accessible
+    ansible.builtin.file:
+      path: "~/path/to/pcap/file"
+      state: directory
+      mode: '0755'
+
+  - name: Ensure PCAP file exists
+    ansible.builtin.file:
+      path: "~/path/to/pcap/file"
+      state: touch
+      mode: 0755
+
+  - name: Run tshark command and save output to a file
+    command: "tshark -r ~/path/to/pcap/file -T fields -e data tcp.port==80"
+    args:
+      warn: no
+    register: extract_pcap
+    failed_when: false
+
+  - name: Save extracted data field value to a file
+#    ansible.builtin.shell: "echo '{{ extract_pcap.stdout }}' | tr -d '>|' | xxd -r -p > ~/path/to/pcap/file"
+    debug:
+      var: extract_pcap
